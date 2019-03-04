@@ -16,21 +16,13 @@ public class Person {
      * @return - returns true if this person has another gender than passed person and they are not husband and wife, false otherwise
      */
     public boolean marry(Person person) {
-        if (man ^ person.man) {
-            if ((spouse == null) & (person.spouse == null)) {
-                spouse = person;
-                person.spouse = this;
-                System.out.println(this.name + " and " + person.name + " got married");
-                return true;
-            }
-            if ((spouse == null) & (person.spouse != null)) {
+        if (person == null){
+            System.out.println("Person is empty");
+            return false;
+        }
+        if (man != person.man) {
+            if ((spouse == null) || (person.spouse == null)) {
                 person.divorce();
-                spouse = person;
-                person.spouse = this;
-                System.out.println(this.name + " and " + person.name + " got married");
-                return true;
-            }
-            if ((spouse != null) & (person.spouse == null)) {
                 this.divorce();
                 spouse = person;
                 person.spouse = this;
@@ -69,5 +61,21 @@ public class Person {
             System.out.println(this.name + " is not married");
             return false;
         }
+    }
+
+    public static void main(String[] args) {
+        Person ivan = new Person(true, "Ivan");
+        Person petr = new Person(true, "Petr");
+        Person rita = new Person(false, "Rita");
+        Person vika = new Person(false, "Vika");
+
+        ivan.marry(ivan);
+        petr.divorce();
+        rita.marry(vika);
+        vika.marry(ivan);
+        ivan.marry(rita);
+        petr.marry(null);
+        petr.marry(new Person(false, "Irina"));
+        petr.marry(rita);
     }
 }
