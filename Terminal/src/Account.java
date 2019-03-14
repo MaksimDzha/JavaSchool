@@ -4,6 +4,7 @@ class Account {
     private int pin = 0;
     private double deposit = 0;
     private long endLock = 0;
+    private int blockTime = 0;
 
     public Account() {
 //Добавить исключение
@@ -32,25 +33,26 @@ class Account {
         //Добавить исключение на отрицательные числа
     }
 
-    protected void setDepositOut(double sum) {
+    protected void setDepositOut(double sum) throws DepositException {
         if (this.deposit >= sum) {
             this.deposit -= sum;
         } else {
-            //Добавить ислючение на снятие суммы больше депозита
+            throw new DepositException("Сумма не должна быть больше депозита");
         }
     }
 
-    protected void lockThis() {
-        // устанавливаем время окончания блокировки объекта на текущее + 10 сек
-        endLock = System.currentTimeMillis() + 10_000;
+    protected void lockThis(int blockTime) {
+        this.blockTime = blockTime;
+        // устанавливаем время окончания блокировки объекта на текущее + blockTime/1000 сек
+        endLock = System.currentTimeMillis() + blockTime;
     }
 
-    protected boolean isLocked(){
+    protected int isLocked(){
         if (endLock > System.currentTimeMillis()){
-            System.out.println("Аккаунт заблокирован! До конца блокировки осталось " + (endLock - System.currentTimeMillis())/1000 + "сек");
-            return true;
+//            System.out.println("Аккаунт заблокирован! До конца блокировки осталось " + (endLock - System.currentTimeMillis())/1000 + "сек");
+            return (int)((endLock - System.currentTimeMillis())/1000);
         }
-        else return false;
+        else return 0;
     }
 
 }

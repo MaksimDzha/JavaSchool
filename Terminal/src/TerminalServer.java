@@ -12,13 +12,13 @@ public class TerminalServer implements Terminal {
     }
 
     @Override
-    public boolean login(Integer card) {
+    public boolean login(Integer card) throws AccountNotFound {
         if (accounts.containsKey(card)) {
             System.out.println("Здравствуйте, " + accounts.get(card).getName() + "!");
             return true;
         } else {
-            return false;
-            //тут надо добавить исключение
+            throw new AccountNotFound("Некорректный ввод данных: карта не зарегистрирована");
+//            return false;
         }
     }
 
@@ -28,30 +28,38 @@ public class TerminalServer implements Terminal {
     }
 
     @Override
-    public boolean inDeposit(Integer card, double sum) {
-        accounts.get(card).setDepositIn(sum);
-        System.out.println("Операция успешно выполнена. Ваш баланс: " + accounts.get(card).getDeposit());
-        return true;
-        //нужно добавить исключение
+    public boolean inDeposit(Integer card, int sum) throws DepositException {
+        if ((sum > 0) && ((sum % 100) == 0)) {
+            accounts.get(card).setDepositIn(sum);
+            System.out.println("Операция успешно выполнена. Ваш баланс: " + accounts.get(card).getDeposit());
+            return true;
+        } else throw new DepositException("Некорректная сумма");
     }
 
     @Override
-    public boolean outDeposit(Integer card, double sum) {
-        accounts.get(card).setDepositOut(sum);
-        System.out.println("Операция успешно выполнена. Ваш баланс: " + accounts.get(card).getDeposit());
-        return true;
+    public boolean outDeposit(Integer card, int sum) throws DepositException, DepositOutException {
+        if ((sum > 0) && ((sum % 500) == 0)) {
+            try {
+                accounts.get(card).setDepositOut(sum);
+            } catch (DepositException e) {
+                throw new DepositOutException("Указанная сумма больше депозита");
+            }
+
+            System.out.println("Операция успешно выполнена. Ваш баланс: " + accounts.get(card).getDeposit());
+            return true;
+        } else throw new DepositException("Некорректная сумма");
         //нужно добавить исключение
     }
 
-    protected int getPin4Valid(Integer card){
+    protected int getPin4Valid(Integer card) {
         return accounts.get(card).getPin();
     }
 
-    protected void accountLock(Integer card){
-        accounts.get(card).lockThis();
+    protected void accountLock(Integer card, int blockTime) {
+        accounts.get(card).lockThis(blockTime);
     }
 
-    protected boolean accountIsLocked(Integer card){
+    protected int accountIsLocked(Integer card) {
         return accounts.get(card).isLocked();
     }
 
