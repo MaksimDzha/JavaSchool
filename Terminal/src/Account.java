@@ -5,12 +5,13 @@ class Account {
     private double deposit = 0;
     private long endLock = 0;
     private int blockTime = 0;
+    private boolean pinUnlock = false;
 
-    public Account() {
+    Account() {
 //Добавить исключение
     }
 
-    public Account(String name, int pin, double deposit) {
+    Account(String name, int pin, double deposit) {
         this.name = name;
         this.pin = pin;
         this.deposit = deposit;
@@ -24,20 +25,48 @@ class Account {
         return pin;
     }
 
+    protected void pinUnlockInit(int pin){
+        if (this.pin == pin){
+            pinUnlock = true;
+        } else {
+            System.out.println("Попытка несанкционированного доступа!");
+            lockThis(10_000);
+        }
+    }
+
+    protected void pinLockInit(){
+        pinUnlock = false;
+    }
+
     protected double getDeposit() {
-        return deposit;
+        if (pinUnlock) {
+            return deposit;
+        } else {
+            System.out.println("Попытка несанкционированного доступа");
+            lockThis(10_000);
+            return 0;
+        }
     }
 
     protected void setDepositIn(double sum) {
-        this.deposit += sum;
-        //Добавить исключение на отрицательные числа
+        if (pinUnlock){
+            this.deposit += sum;
+        } else {
+            System.out.println("Попытка несанкционированного доступа");
+            lockThis(10_000);
+        }
     }
 
     protected void setDepositOut(double sum) throws DepositException {
-        if (this.deposit >= sum) {
-            this.deposit -= sum;
+        if (pinUnlock) {
+            if (this.deposit >= sum) {
+                this.deposit -= sum;
+            } else {
+                throw new DepositException("Сумма не должна быть больше депозита");
+            }
         } else {
-            throw new DepositException("Сумма не должна быть больше депозита");
+            System.out.println("Попытка несанкционированного доступа");
+            lockThis(10_000);
         }
     }
 
@@ -47,12 +76,11 @@ class Account {
         endLock = System.currentTimeMillis() + blockTime;
     }
 
-    protected int isLocked(){
-        if (endLock > System.currentTimeMillis()){
+    protected int isLocked() {
+        if (endLock > System.currentTimeMillis()) {
 //            System.out.println("Аккаунт заблокирован! До конца блокировки осталось " + (endLock - System.currentTimeMillis())/1000 + "сек");
-            return (int)((endLock - System.currentTimeMillis())/1000);
-        }
-        else return 0;
+            return (int) ((endLock - System.currentTimeMillis()) / 1000);
+        } else return 0;
     }
 
 }

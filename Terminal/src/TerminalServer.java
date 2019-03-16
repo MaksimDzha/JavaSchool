@@ -4,6 +4,7 @@ public class TerminalServer implements Terminal {
     private static Map<Integer, Account> accounts = new HashMap();
     private static Account person_01 = new Account("Михаил Михайлов", 1234, 10_000);
     private static Account person_02 = new Account("Анна Петрова", 1232, 20_000);
+    private boolean loginInit = false;
 
     public TerminalServer() {
         accounts.put(12345678, person_01);
@@ -12,14 +13,30 @@ public class TerminalServer implements Terminal {
     }
 
     @Override
-    public boolean login(Integer card) throws AccountNotFound {
+    public boolean login(TerminalServer server, Integer card) throws AccountNotFound {
+        loginInit = true;
         if (accounts.containsKey(card)) {
             System.out.println("Здравствуйте, " + accounts.get(card).getName() + "!");
-            return true;
         } else {
             throw new AccountNotFound("Некорректный ввод данных: карта не зарегистрирована");
 //            return false;
         }
+        try{
+            PinValidator.pinValid(server, card);
+        } catch (AccountIsLockedException e) {
+//            e.printStackTrace();
+            System.out.println("Доступ закрыт");
+            return false;
+        }
+        accounts.get(card).pinUnlockInit(getPin4Valid(card));
+        loginInit = false;
+        return true;
+    }
+
+    public void logout(int card){
+        accounts.get(card).pinLockInit();
+        loginInit = false;
+        System.out.println("Выход из учетной записи осуществлен");
     }
 
     @Override
@@ -44,7 +61,6 @@ public class TerminalServer implements Terminal {
             } catch (DepositException e) {
                 throw new DepositOutException("Указанная сумма больше депозита");
             }
-
             System.out.println("Операция успешно выполнена. Ваш баланс: " + accounts.get(card).getDeposit());
             return true;
         } else throw new DepositException("Некорректная сумма");
@@ -52,7 +68,13 @@ public class TerminalServer implements Terminal {
     }
 
     protected int getPin4Valid(Integer card) {
-        return accounts.get(card).getPin();
+        if (loginInit){
+            return accounts.get(card).getPin();
+        } else {
+            System.out.println("Попытка несанкционированного доступа");
+            accountLock(card, 10000);
+            return 0;
+        }
     }
 
     protected void accountLock(Integer card, int blockTime) {
