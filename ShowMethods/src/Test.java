@@ -5,6 +5,7 @@ public class Test {
         System.out.println(Integer.class.getCanonicalName());
         s[0] = "java.lang.Integer";
 //        s[1] = "get";
-        ShowMethods.main(s);
+//        ShowMethods.main(s);
+        ShowDeclaredMethods.main(s);
     }
 }

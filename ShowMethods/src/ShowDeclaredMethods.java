@@ -1,17 +1,17 @@
 //Применение refleсtion для отображения всех методов класса,
-// включая родительские методы
+// включая приватные методы
 
 import java.lang.reflect.*;
 import java.util.regex.Pattern;
 
 
-public class ShowMethods {
+public class ShowDeclaredMethods {
     private static String usage =
             "Используйте:\n" +
                     "Showmethods qualified.class.name\n" +
-                    "чтобы показать все методы в классе, кроме private, или:\n" +
+                    "чтобы показать все реализованные методы и конструкторы класса, или:\n" +
                     "Showmethods qualified.class.name word\n" +
-                    "чтобы найти все не private методы, содержащие слово 'word'";
+                    "чтобы найти все реализованные методы и конструкторы, содержащие слово 'word'";
     private static Pattern p = Pattern.compile("\\w+\\.");
 
     public static void main(String[] args) {
@@ -23,11 +23,13 @@ public class ShowMethods {
         int countCtors = 0;
         try {
             Class<?> c = Class.forName(args[0]);
-            Method[] methods = c.getMethods();
-            Constructor[] constructors = c.getConstructors();
+            Method[] methods = c.getDeclaredMethods();
+            Constructor[] constructors = c.getDeclaredConstructors();
             if (args.length == 1) {
                 for (Method method : methods)
                     System.out.println(p.matcher(method.toString()).replaceAll(""));
+//                    System.out.println(method.toString());
+
                 for (Constructor constructor : constructors)
                     System.out.println(p.matcher(constructor.toString()).replaceAll(""));
                 countMethods = methods.length;
