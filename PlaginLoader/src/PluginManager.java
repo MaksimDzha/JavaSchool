@@ -27,7 +27,6 @@ public class PluginManager {
                     Plagin execute = (Plagin) clazz.newInstance();
                     System.out.println(execute.getClass().getClassLoader().toString());
                     execute.load();
-                    execute.run();
                     execute.unload();
 
                     break;
