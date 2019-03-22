@@ -25,9 +25,9 @@ public class PluginManager {
 //                System.out.println(clazz.toString());
                 if (plaginTempName.equals(pluginName) && (clazz.toString().equals(pluginClassName))) {
                     Plagin execute = (Plagin) clazz.newInstance();
-                    System.out.println(execute.getClass().getClassLoader().toString());
+//                    System.out.println(execute.getClass().getClassLoader().toString());
                     execute.load();
-                    execute.unload();
+//                    execute.unload();
 
                     break;
                 }

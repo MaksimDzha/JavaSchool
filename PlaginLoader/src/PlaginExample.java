@@ -2,11 +2,11 @@ public class PlaginExample implements Plagin {
 
     @Override
     public void load() {
-        System.out.println("Module " + this.getClass() + " loading ...");
+        System.out.println("Plagin " + this.getClass() + " loading ...");
     }
 
-    @Override
-    public void unload() {
-        System.out.println("Module " + this.getClass() + " inloading ...");
-    }
+//    @Override
+//    public void unload() {
+//        System.out.println("Plagin " + this.getClass() + " unloading ...");
+//    }
 }
