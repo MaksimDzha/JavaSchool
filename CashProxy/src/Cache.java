@@ -6,6 +6,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.METHOD)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Cache {
-    boolean IN_MEMORY() default true;
-    boolean IN_FILE() default false;
+    StorageType[] value() default StorageType.IN_MEMORY;
 }
