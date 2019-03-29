@@ -1,5 +1,6 @@
 interface Service {
 
     long doHardWork(long time);
-    void doHardWork();
+    long doHardWork();
+    long doVeryHardWork(long time, String message);
 }
