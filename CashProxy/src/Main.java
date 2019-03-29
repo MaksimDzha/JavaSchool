@@ -1,4 +1,6 @@
+import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.lang.reflect.Type;
 
 public class Main {
     public static void main(String[] args) {
@@ -7,7 +9,6 @@ public class Main {
                 UseService.class.getClassLoader(),
                 UseService.class.getInterfaces(),
                 new CacheProxy(testService));
-
         cacheTestService.doHardWork(4L);
         cacheTestService.doHardWork(4L);
         cacheTestService.doHardWork(6L);

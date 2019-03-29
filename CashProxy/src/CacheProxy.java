@@ -1,9 +1,5 @@
-import java.io.*;
 import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.Map;
 
 public class CacheProxy implements InvocationHandler {
 
@@ -28,13 +24,11 @@ public class CacheProxy implements InvocationHandler {
         switch (cacheAnn.value()) {
             case IN_MEMORY:
                 System.out.println(StorageType.IN_MEMORY);
-                return CacheInMemory.findInMemory(method, args, cacheObject);
+                return CacheInMemory.findInMemory(method, args, cacheObject, cacheAnn);
             case IN_FILES:
                 System.out.println(StorageType.IN_FILES);
-                return CacheInFiles.findInFiles(method, args, cacheObject);
+                return CacheInFiles.findInFiles(method, args, cacheObject,cacheAnn);
         }
         return 0;
     }
-
-
 }

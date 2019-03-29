@@ -9,14 +9,8 @@ class CacheInMemory {
     private static Map<String, Object> cacheMethods = new HashMap<>();
 
     //Поиск в памяти
-    static Object findInMemory(Method method, Object[] args, Object cacheObject) {
-        String cacheArgs = new String();
-        if (args != null) {
-            for (Object arg : args)
-                cacheArgs += arg.toString() + " ";
-        } else {
-            cacheArgs = "";
-        }
+    static Object findInMemory(Method method, Object[] args, Object cacheObject, Cache cacheAnn) {
+        String cacheArgs = CashArgs.get(args, cacheAnn);
         if (cacheMemori.containsKey(method))
             if (cacheMethods.containsKey(cacheArgs)) {
                 System.out.println("Результат из кеша с аргументами ( " + cacheArgs + "): " + cacheMemori.get(method).get(cacheArgs));

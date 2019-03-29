@@ -9,14 +9,8 @@ class CacheInFiles {
     private static Map<String, Object> cacheMethods = new HashMap<>();
 
     //Поиск в файлах
-    static Object findInFiles(Method method, Object[] args, Object cacheObject) {
-        String cacheArgs = new String();
-        if (args != null) {
-            for (Object arg : args)
-                cacheArgs += arg.toString() + " ";
-        } else {
-            cacheArgs = "";
-        }
+    static Object findInFiles(Method method, Object[] args, Object cacheObject, Cache cacheAnn) {
+        String cacheArgs = CashArgs.get(args, cacheAnn);
         try {
             FileInputStream fis = new FileInputStream(method.getName());
             ObjectInputStream ois = new ObjectInputStream(fis);
@@ -27,8 +21,7 @@ class CacheInFiles {
             }
         } catch (FileNotFoundException e) {
             cacheMethods.clear();
-            System.out.println("Метод не кэшировался, запускается выполнение основного алгоритма:");
-            return cacheInFiles(method, args, cacheArgs, cacheObject);
+            System.out.print("Метод не кэшировался. ");
         } catch (IOException | ClassNotFoundException e) {
             e.printStackTrace();
         }
