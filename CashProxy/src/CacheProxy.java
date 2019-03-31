@@ -1,9 +1,12 @@
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 
+//Класс реализует перехват методов объекта и кэширование возвращаемых значений.
+//Метод не должен быть void и иметь аннотацию @Cache для запуска алгоритма кэширования.
+
 public class CacheProxy implements InvocationHandler {
 
-    private Object cacheObject;
+    private Object cacheObject; //Объект, методы которого подвергаются кэшированию
 
     public CacheProxy(Object cacheObject) {
         this.cacheObject = cacheObject;
@@ -16,19 +19,18 @@ public class CacheProxy implements InvocationHandler {
         Cache cacheAnn = cacheObject.getClass()
                 .getMethod(method.getName(), method.getParameterTypes())
                 .getAnnotation(Cache.class);
-        if (cacheAnn == null) {
-            System.out.println("Метод без аннотации @Cache, выполняем: ");
-            return method.invoke(cacheObject, args);
+        if (cacheAnn != null) {
+            System.out.print("Проверяем кэш...");
+            switch (cacheAnn.value()) {
+                case IN_MEMORY:
+                    System.out.println(StorageType.IN_MEMORY);
+                    return CacheInMemory.findInMemory(method, args, cacheObject, cacheAnn);
+                case IN_FILES:
+                    System.out.println(StorageType.IN_FILES);
+                    return CacheInFiles.findInFiles(method, args, cacheObject, cacheAnn);
+            }
         }
-        System.out.print("Проверяем кэш...");
-        switch (cacheAnn.value()) {
-            case IN_MEMORY:
-                System.out.println(StorageType.IN_MEMORY);
-                return CacheInMemory.findInMemory(method, args, cacheObject, cacheAnn);
-            case IN_FILES:
-                System.out.println(StorageType.IN_FILES);
-                return CacheInFiles.findInFiles(method, args, cacheObject,cacheAnn);
-        }
-        return 0;
+        System.out.println("Метод без аннотации @Cache, выполняем без кеширования: ");
+        return method.invoke(cacheObject, args);
     }
 }
