@@ -6,12 +6,11 @@ import java.util.concurrent.TimeUnit;
 
 public class UseService implements Service, Serializable {
 
-    private long result;
-
     @Override
     @Cache(value = StorageType.IN_FILES)
     public long doHardWork(long time) {
         System.out.print("Сервис запущен главным приложением. Время выполнения: ");
+        long result;
         long t1 = System.currentTimeMillis();
         try {
             TimeUnit.SECONDS.sleep(time);
@@ -29,6 +28,7 @@ public class UseService implements Service, Serializable {
     @Cache(value = StorageType.IN_FILES)
     public long doHardWork() {
         System.out.print("Сервис запущен главным приложением. Время выполнения: ");
+        long result;
         long t1 = System.currentTimeMillis();
         try {
             TimeUnit.SECONDS.sleep(3);
@@ -45,6 +45,7 @@ public class UseService implements Service, Serializable {
     @Cache(value = StorageType.IN_FILES)
     public long doVeryHardWork(long time, String message) {
         System.out.println("Долгий сервис запущен главным приложением. Сообщение: " + message);
+        long result;
         System.out.print("Время работы: ");
         long t1 = System.currentTimeMillis();
         try {
@@ -59,17 +60,33 @@ public class UseService implements Service, Serializable {
     }
 
     @Override
-    @Cache(value = StorageType.IN_MEMORY, countElement = 10)
-    public Object[] doWorkList(int count) {
-        Object[] list = new Object[count];
-        for (int i=0; i < count; i++)
-            list[i] = i;
-        System.out.println("Количество элементов массива в расчете = " + list);
+    @Cache(value = StorageType.IN_FILES, countElement = 5)
+    public ArrayList doWorkList(int count) {
+        ArrayList list = new ArrayList();
+        for (int i = 0; i < count; i++)
+            list.add(i);
+        System.out.println("Результат в коллекции = " + list);
         return list;
     }
 
+    @Override
+    @Cache(value = StorageType.IN_FILES, countElement = 5)
+    public HashSet doWorkSet(int count) {
+        HashSet set = new HashSet();
+        for (int i = 0; i < count; i++)
+            set.add(i);
+        System.out.println("Результат в коллекции = " + set);
+        return set;
+    }
 
-//    public long getResult() {
-//        return result;
-//    }
+    @Override
+    @Cache(value = StorageType.IN_FILES, countElement = 5)
+    public Long[] doWorkArray(int count) {
+        Long[] list = new Long[count];
+        for (int i = 0; i < count; i++)
+            list[i] = (long) i;
+        System.out.println("Результат в коллекции = " + list);
+        return list;
+    }
+
 }
