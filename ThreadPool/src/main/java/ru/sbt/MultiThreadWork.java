@@ -10,6 +10,9 @@ public class MultiThreadWork {
     public static void main(String[] args) throws ExecutionException, InterruptedException {
 //        ExecutorService threadPool = Executors.newFixedThreadPool(8);
         ThreadPool threadPool = new ThreadPool(8);
+        threadPool.start();
+        TimeUnit.SECONDS.sleep(3);
+        System.out.println("Начинаем вычисления");
         Compute compute = new Compute();
 
         long start = System.nanoTime();

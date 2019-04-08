@@ -5,12 +5,19 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Executor;
 
 public class ThreadPool implements Executor {
+    private int threadsCount;
     private final Queue<Runnable> workQueue = new ConcurrentLinkedQueue<>();
     private volatile boolean isRunning = true;
 
-    public ThreadPool(int nThreads) {
-        for (int i = 0; i < nThreads; i++) {
-            new Thread(new TaskWorker()).start();
+    public ThreadPool(int threadsCount) {
+        this.threadsCount = threadsCount;
+    }
+
+    public void start () {
+        for (int i = 0; i < threadsCount; i++) {
+            Thread t = new Thread(new TaskWorker());
+            t.start();
+            System.out.println(t.getName() + " is started");
         }
     }
 
